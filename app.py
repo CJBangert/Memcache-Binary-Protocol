@@ -5,35 +5,68 @@ from Memcache import Memcache
 from main import *
 from Memcache import *
 
-HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
-PORT = 5000        # Port to listen on
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+from _thread import *
+
+
+#instatiate cache
+memcache = Memcache()
+
+
+threadLock = threading.Lock()
+
+def Main():
+
+    HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
+    PORT = 5000        # Port to listen on
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
     s.bind((HOST, PORT))
-    s.listen()
-    conn, addr = s.accept()
-    with conn:
-        print('Connected by', addr)
+    
+    #5 is suggested num of non-accepted outstanding connections
+    s.listen(5)
+    
+    while(True):
+        conn, addr = s.accept()
 
-        memcache = Memcache()
+        threadLock.acquire()
+        print('Connected by', addr, flush=True)
+        start_new_thread(threaded,(conn,))
 
-        while(True):
-            data = conn.recv(1024)
-            print(data)
-            if not data:
-                break
+        
+
+    s.close() 
+
+ 
+
+def threaded(conn):
+    while(True):
+        data = conn.recv(1024)
+
+        print("Incoming: ", data, flush=True)
+
+        if not data:
+
+            print("End of stream...", flush=True)
+
+            #release lock on exit
+            threadLock.release()
+
+            break
+        try:    
             response = memcached_process(memcache, data)
-            #conn.sendall(data)
+
+        except UnsupportedOperation:
+            response = str_to_bytes("Unsupported op")
+
+        
+        conn.send(response)
+        
+
+    conn.close()
+        
+
+    
 
 
-
-""" from flask import Flask
-
-app = Flask(__name__)
-
-@app.route("/get")
-def get(self, key):
-    return "Hello"
-
-@app.route("/set")
-def set(self, key, value):
-    return("Helloset") """
+if __name__ == '__main__':
+    Main()

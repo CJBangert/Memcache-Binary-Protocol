@@ -12,7 +12,7 @@ class Memcache:
         
         self.cache[key] = value
 
-        print("Successfully added value: ", self.cache[key])
+        print("Successfully added value: ", self.cache[key], flush=True)
             
         
 
@@ -20,8 +20,14 @@ class Memcache:
 
         if(key in self.cache):
 
-            return self.cache[key]
+            val = self.cache[key]
+
+            print("Got value: ", val, flush=True)
+
+            return val
 
         else:
+
+            print("Key not found: ", key, flush=True)
 
             return None

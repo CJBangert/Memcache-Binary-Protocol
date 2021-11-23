@@ -53,14 +53,21 @@ def memcached_process(memcache, data):
 def generate_set_response(key,value):
     
     magic = 0x81 #'0x81'
+
     opcode = 0x01
 
     key_length = 0
+
     extra_len = 0
+
     data_type = 0
+
     status = 0
+
     total_body = 0
+
     opaque = 0
+    
     CAS = 1
 
     format_str = HEADER_STRUCT_NOT_FOUND_OR_SET
@@ -111,13 +118,20 @@ def generate_get_response(value):
     
     if(value is not None):
 
+        #value found
         status =  0 #'0x0000'
+
         CAS = 1
-        extra= 1765040 # was 3735928559 'deadbeef' just bc that's what the docs had, was causing client to try and decompress - 
-        '''had to find at what values that branch doesn't get evaluated (where flags & (1 << 3) == 0 . To go down correct code branch,
-         the flag also had to be divisible by 4 (flags & 1 << 4) !=0. I had the code run and just print a bunch of values that would work and I picked one)'''
+
+        '''documented value for get 'extras' or flags' was 3735928559, '0xdeadbeef'. was causing client to try and decompresshad to find at what values that branch doesn't
+         get evaluated (where flags & (1 << 3) == 0 . To go down correct code branch, the flag also had to be divisible by 4 (flags & 1 << 4) !=0. I had the code run and 
+         just print a bunch of values that would work and I picked one)'''
+        extra= 1765040  
+        
         extra_len = 4 #'0x04'
+
         valbytes = str_to_bytes(value)
+        
         total_body = len(valbytes) + extra_len 
 
         format_str = HEADER_STRUCT + ('L%ds'%(len(valbytes)))   
@@ -126,23 +140,28 @@ def generate_get_response(value):
                                                 #!B   |  B   |    H     |      B  |     B   |  H   | L        | L    | Q |  L  | %ds'%(len(valbytes))    
 
     else:
+
+        # not found 
         status = 1
+
         CAS = 0
+
         value = "not found"
+
         extra_len = 0
+
         valbytes = str_to_bytes(value)
+
         total_body = len(value) + extra_len 
 
         format_str = HEADER_STRUCT_NOT_FOUND_OR_SET + ('%ds'%(len(valbytes)))
         
         return_value = struct.pack(format_str , magic, opcode,key_length,extra_len,data_type,status,total_body,opaque,CAS,valbytes) 
                                                 #!B     B       H           B       B           H       L          L    Q          
-        
-    
-        
-
     print("return: ",return_value, flush=True)
+
     print(len(return_value), flush=True)
+
     return return_value
 
 
@@ -167,6 +186,7 @@ def get_key_get(data):
 
     #get key is bytes 24-end
     print(data[24:])
+
     return data[24:]
 
 def get_key_set(data, keylen):
@@ -192,7 +212,7 @@ def get_keylen(data):
 
     return data[3]
 
-#from python-binary_memcached
+#from python-binary-memcached
 def str_to_bytes(value):
     """
     Simply convert a string type to bytes if the value is a string

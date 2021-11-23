@@ -2,12 +2,12 @@
 
 ## Installation
 Used Python 3.8.10 on Ubuntu 20.04 (anything python 3 should work):  
-```pip install -r requiterments.txt ```
+```pip install -r requirements.txt ```
 
 ## To Run:
 ``` python app.py ```
 
-*listens on 127.0.0.1:5000
+*listens on 127.0.0.1:5000  
 sample client code in client.py. To run:  
 
 ``` python client.py```

@@ -1,8 +1,8 @@
 # Memcache-Binary-Protocol
 
 ## Installation
-Used Python 3.8.10 (anything python 3 should work):
-pip install -r requiterments.txt
+Used Python 3.8.10 on Ubuntu 20.04 (anything python 3 should work):  
+```pip install -r requiterments.txt ```
 
 ## To Run:
 ``` python app.py ```

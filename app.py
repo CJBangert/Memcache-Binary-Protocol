@@ -1,7 +1,5 @@
 import socket
 from Memcache import Memcache
-#import constants.HOST as HOST
-#import constants.PORT as PORT
 from main import *
 from Memcache import *
 

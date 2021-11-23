@@ -104,7 +104,7 @@ def generate_get_response(value):
     
     key_length = 0
 
-    data_type = 0 #'0x00'
+    data_type = 0 #'0x00 - raw bytes'
     
     opaque = 0 #'0x00000000'
     
@@ -113,10 +113,12 @@ def generate_get_response(value):
 
         status =  0 #'0x0000'
         CAS = 1
-        extra= 3735928559 #dead beef (idk see docs)
+        extra= 1765040 # was 3735928559 'deadbeef' just bc that's what the docs had, was causing client to try and decompress - 
+        '''had to find at what values that branch doesn't get evaluated (where flags & (1 << 3) == 0 . To go down correct code branch,
+         the flag also had to be divisible by 4 (flags & 1 << 4) !=0. I had the code run and just print a bunch of values that would work and I picked one)'''
         extra_len = 4 #'0x04'
         valbytes = str_to_bytes(value)
-        total_body = len(valbytes) + extra_len
+        total_body = len(valbytes) + extra_len 
 
         format_str = HEADER_STRUCT + ('L%ds'%(len(valbytes)))   
         

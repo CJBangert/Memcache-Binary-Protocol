@@ -67,7 +67,7 @@ def generate_set_response(key,value):
     total_body = 0
 
     opaque = 0
-    
+
     CAS = 1
 
     format_str = HEADER_STRUCT_NOT_FOUND_OR_SET
@@ -107,6 +107,7 @@ def generate_get_response(value):
        +---------------+ '''
 
     magic = 0x81 #'0x81 -> response magic'
+    
     opcode = 0x00 #get opcode
     
     key_length = 0
